@@ -56,7 +56,7 @@ contract SmartWallet is BaseAccount{
 
 
 
-    function hello() public pure returns(string memory){
+    function hello() public view returns(string memory){
         return "you called me";
     }
 
