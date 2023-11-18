@@ -17,6 +17,7 @@ A simple permissionless protocol enabling anyone to create a POAP collection usi
 - [*"ethereum sepolia"*](https://sepolia.etherscan.io/address/0x7a479aae93f97f00117571ee1e61bacab2c780a1#code)
 - [*"arbitrum sepolia"*](https://sepolia.arbiscan.io/address/0x420fAd7011A85cc6C308941A7245b7c0E695Fe85#code)
 - [*"polygon zkEVM testnet"*](https://testnet-zkevm.polygonscan.com/address/0x420fAd7011A85cc6C308941A7245b7c0E695Fe85)
+- [*"mantle testnet"*](https://explorer.testnet.mantle.xyz/address/0x343f50A627fc2d4856e606aA15b3b93A616D82AE)
 
 ## Presentation
 
