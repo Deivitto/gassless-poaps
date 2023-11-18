@@ -1,21 +1,21 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.13;
 
-
-
 interface IEntryPoint {
 
-struct UserOps {
-
-}
-
-    
 }
 
 contract SmartWallet {
 
+    IEntryPoint entrypoint;
+    address owner;
 
-    constructor(){}
+    constructor(IEntryPoint _entrypoint, address _owner){
+        entrypoint = _entrypoint;
+        owner = _owner;
+    }
+
+
 
 
 }

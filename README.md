@@ -7,8 +7,7 @@
 
 
 
-- RIP 
-
 
 ## Links
+- RIP 7560 https://github.com/ethereum/RIPs/pull/3/files
 - https://github.com/eth-infinitism/account-abstraction
