@@ -10,7 +10,8 @@ A simple permissionless protocol enabling anyone to create a POAP collection usi
 - Easy integration with ERC-4337 and to RIP-75607560
 - Secured used Certora property testing
 
-![poap1 drawio-3](https://github.com/Deivitto/gassless-poaps/assets/47452703/b90ffa25-fc0c-411e-8d6b-e6e3685c2cf7)
+
+![diagram](https://github.com/Deivitto/gassless-poaps/assets/47452703/4e4a1aaf-ce92-43cb-b8d4-394d795db231)
 
 
 #### Deployed on
