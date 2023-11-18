@@ -20,13 +20,8 @@ contract SmartWallet is BaseAccount{
     }
 
 
-    function hello() public view returns(string memory){
-        return "you called me";
-    }
+    function _validateSignature(UserOperation calldata userOp,bytes32 userOpHash) internal override returns (uint256 validationData){}
 
-
-    // Empty function: not implemented
-    function _validateSignature(UserOperation calldata userOp, bytes32 userOpHash) internal override returns (uint256 validationData){}
 
 
 }
