@@ -1,0 +1,65 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+:root,
+[data-theme] {
+  background: hsl(var(--b2));
+}
+
+body {
+  min-height: 100vh;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin-bottom: 0.5rem;
+  line-height: 1;
+}
+
+p {
+  margin: 1rem 0;
+}
+
+.btn {
+  @apply shadow-md;
+}
+
+.btn.btn-ghost {
+  @apply shadow-none;
+}
+
+.custom_form{
+  padding: 1rem 2rem;
+  border-radius:8px;
+  border: 1px solid hsl(var(--b2));
+  width: 100%;
+  max-width: 700px;
+  min-width: 300px;
+}
+
+.fileType{
+    display: none;
+
+}
+
+input[type="file"] {
+  display: none;
+}
+
+.custom-file-upload {
+  border: 1px solid #ccc;
+  display: inline-block;
+  padding: 6px 12px;
+  cursor: pointer;
+  border-radius: 50px;
+  padding:1rem;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+}
+
+.rounded-3xl:hover{
+  cursor:pointer;
+}
