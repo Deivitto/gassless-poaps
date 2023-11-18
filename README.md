@@ -1,58 +1,66 @@
-# Smart Wallet
+## Foundry
 
-## Frontend Quickstart
+**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
 
-To get started with Scaffold-ETH 2, follow the steps below:
+Foundry consists of:
 
-1. Clone this repo & install dependencies
+-   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
+-   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
+-   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
+-   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
 
-```
-cd scaffold-eth-2
-yarn install
-foundryup
-```
+## Documentation
 
-2. Create your `.env` file inside `packages/foundry`:
+https://book.getfoundry.sh/
 
-```
-(echo "DEPLOYER_PRIVATE_KEY=";  echo "ALCHEMY_API_KEY=oKxs-03sij-U_N0iOlrSsZFr29-IqbuF"; echo "ETHERSCAN_API_KEY=DNXJA8RX2Q3VZ4URQIWP7Z68CJXQZSC6AW") >> packages/foundry/.env
-```
+## Usage
 
-3. Run a local network in the first terminal:
+### Build
 
-```
-yarn chain
+```shell
+$ forge build
 ```
 
-This command starts a local Ethereum network using Anvil in Foundry. The network runs on your local machine and can be used for testing and development. You can customize the network configuration in `foundry.toml`
+### Test
 
-4. On a second terminal, deploy the test contract:
-
-```
-yarn deploy
+```shell
+$ forge test
 ```
 
-This command deploys a test smart contract to the local network. The contract is located in `packages/foundry/src` and can be modified to suit your needs. The `yarn deploy` command uses the deploy script located in `packages/foundry/script/Deploy.s.sol` to deploy the contract to the network. You can also customize the deploy script.
+### Format
 
-5. On a third terminal, start your NextJS app:
-
-```
-yarn start
+```shell
+$ forge fmt
 ```
 
-Visit your app on: `http://localhost:3000`. You can interact with your smart contract using the contract component or the example ui in the frontend. You can tweak the app config in `packages/nextjs/scaffold.config.ts`.
+### Gas Snapshots
 
-Run smart contract test with `yarn foundry:test`
+```shell
+$ forge snapshot
+```
 
-- Edit your smart contract `YourContract.sol` in `packages/foundry/src`
-- Edit your frontend in `packages/nextjs/pages`
-- Edit your deployment scripts in `packages/foundry/script/Deploy.s.sol`
+### Anvil
 
-- Adding custom policy stuff
-    - circuit breaker?
-    - can this wallet belong to a big entity?
-    - multi signature
+```shell
+$ anvil
+```
 
-## Links
-- RIP 7560 https://github.com/ethereum/RIPs/pull/3/files
-- https://github.com/eth-infinitism/account-abstraction
+### Deploy
+
+```shell
+$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
+```
+
+### Cast
+
+```shell
+$ cast <subcommand>
+```
+
+### Help
+
+```shell
+$ forge --help
+$ anvil --help
+$ cast --help
+```
