@@ -13,10 +13,10 @@ A simple permissionless protocol enabling anyone to create a POAP collection usi
 ![poap1 drawio-3](https://github.com/Deivitto/gassless-poaps/assets/47452703/b90ffa25-fc0c-411e-8d6b-e6e3685c2cf7)
 
 
-#### Addresses
-- [ethereum sepolia](https://sepolia.etherscan.io/address/0x7a479aae93f97f00117571ee1e61bacab2c780a1#code)
-
+#### Deployed on
+- [*"ethereum sepolia"*](https://sepolia.etherscan.io/address/0x7a479aae93f97f00117571ee1e61bacab2c780a1#code)
+- []
 
 ## Presentation
 
-[Wine & H presentation](https://docs.google.com/presentation/d/1YhWw14Ch8chmGwQWdXCl38cri8ygIXXrtXC9SYrKH5k/edit?usp=sharing)
+[Gasless POAP presentation](https://docs.google.com/presentation/d/1YhWw14Ch8chmGwQWdXCl38cri8ygIXXrtXC9SYrKH5k/edit?usp=sharing)
