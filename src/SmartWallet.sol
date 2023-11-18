@@ -15,7 +15,7 @@ contract SmartWallet is BaseAccount{
         owner = _owner;
     }
 
-
+    // this should be implemented in the front end via an SDK!
     function createUserOp(
         address _sender,               // sender of the user op
         uint256 _nonce,                // nonce for replay protection
