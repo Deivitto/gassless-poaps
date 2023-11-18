@@ -20,3 +20,16 @@ A simple permissionless protocol enabling anyone to create a POAP collection usi
 ## Presentation
 
 [Gasless POAP presentation](https://docs.google.com/presentation/d/1YhWw14Ch8chmGwQWdXCl38cri8ygIXXrtXC9SYrKH5k/edit?usp=sharing)
+
+## Test frontend
+`cd frontend`
+
+To run the frontend nextJS app:
+`yarn start`
+
+Launch an anvil node with foundry:
+`yarn chain`
+
+Deploy on the local fork:
+`yarn deploy`
+
