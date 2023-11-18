@@ -19,10 +19,6 @@ contract SmartWalletTest is Test {
         sw = new SmartWallet(goerli_entryPointContract, user);
     }
 
-    function testHello() public {
-        assertEq(sw.hello(), "you called me");
-    }
-
 
     function testExecuteUserOp() public {
         // sender of the user op
