@@ -152,3 +152,118 @@ rule transferAdditivity(env e){
 
     assert balanceAfterSingleTransaction == balanceAfterDoubleTransaction, "Not additive";
 }
+
+// safeTransferFrom updates `from` and `to` balances
+// certoraRun certora/configuration/Poaps.conf  --rule transferCorrectness --packages @openzeppelin=lib/openzeppelin-contracts
+rule transferCorrectness(env e){
+    address from; address to; uint256 id; uint256 amount; bytes data;
+
+    require to != from;
+
+    mathint fromBalanceBefore = balanceOf(from, id);
+    mathint toBalanceBefore = balanceOf(to, id);
+
+    safeTransferFrom(e, from, to, id, amount, data);
+
+    mathint fromBalanceAfter = balanceOf(from, id);
+    mathint toBalanceAfter = balanceOf(to, id);
+
+    assert fromBalanceBefore == fromBalanceAfter + amount, "Something wet wrong";
+    assert toBalanceBefore == toBalanceAfter - amount, "Something wet wrong";
+}
+
+// safeBatchTransferFrom updates `from` and `to` balances)
+// certoraRun certora/configuration/Poaps.conf  --rule transferBatchCorrectness --packages @openzeppelin=lib/openzeppelin-contracts
+// warning: vacuity check failed (the rule is vacuous):
+rule transferBatchCorrectness(env e){
+    address from; address to; uint256[] ids; uint256[] amounts; bytes data;
+    uint256 idToCheck1; uint256 amountToCheck1;
+    uint256 idToCheck2; uint256 amountToCheck2;
+    uint256 idToCheck3; uint256 amountToCheck3;
+
+    require to != from;
+    require idToCheck1 != idToCheck2 && idToCheck3 != idToCheck2 && idToCheck1 != idToCheck3;
+    
+    require ids.length == 3;        
+    require amounts.length == 3;    
+    require ids[0] == idToCheck1; require amounts[0] == amountToCheck1;
+    require ids[1] == idToCheck2; require amounts[1] == amountToCheck2;
+    require ids[2] == idToCheck3; require amounts[2] == amountToCheck3;
+
+    mathint fromBalanceBefore1 = balanceOf(from, idToCheck1);
+    mathint fromBalanceBefore2 = balanceOf(from, idToCheck2);
+    mathint fromBalanceBefore3 = balanceOf(from, idToCheck3);
+
+    mathint toBalanceBefore1 = balanceOf(to, idToCheck1);
+    mathint toBalanceBefore2 = balanceOf(to, idToCheck2);
+    mathint toBalanceBefore3 = balanceOf(to, idToCheck3);
+
+    safeBatchTransferFrom(e, from, to, ids, amounts, data);
+
+    mathint fromBalanceAfter1 = balanceOf(from, idToCheck1);
+    mathint fromBalanceAfter2 = balanceOf(from, idToCheck2);
+    mathint fromBalanceAfter3 = balanceOf(from, idToCheck3);
+
+    mathint toBalanceAfter1 = balanceOf(to, idToCheck1);
+    mathint toBalanceAfter2 = balanceOf(to, idToCheck2);
+    mathint toBalanceAfter3 = balanceOf(to, idToCheck3);
+
+    assert (fromBalanceBefore1 == fromBalanceAfter1 + amountToCheck1)
+                && (fromBalanceBefore2 == fromBalanceAfter2 + amountToCheck2)
+                && (fromBalanceBefore3 == fromBalanceAfter3 + amountToCheck3), "Something wet wrong";
+    assert (toBalanceBefore1 == toBalanceAfter1 - amountToCheck1)
+                && (toBalanceBefore2 == toBalanceAfter2 - amountToCheck2)
+                && (toBalanceBefore3 == toBalanceAfter3 - amountToCheck3), "Something wet wrong";
+}
+
+// cannot transfer more than `from` balance (safeTransferFrom version)
+// certoraRun certora/configuration/Poaps.conf  --rule cannotTransferMoreSingle --packages @openzeppelin=lib/openzeppelin-contracts
+rule cannotTransferMoreSingle(env e){
+    address from; address to; uint256 id; uint256 amount; bytes data;
+    uint256 balanceBefore = balanceOf(from, id);
+
+    safeTransferFrom@withrevert(e, from, to, id, amount, data);
+
+    assert amount > balanceBefore => lastReverted, "Achtung! Scammer!";
+}
+
+// cannot transfer more than allowed (safeBatchTransferFrom version)
+// certoraRun certora/configuration/Poaps.conf  --rule cannotTransferMoreSingle --packages @openzeppelin=lib/openzeppelin-contracts
+rule cannotTransferMoreBatch(env e){
+    address from; address to; uint256[] ids; uint256[] amounts; bytes data;
+    uint256 idToCheck1; uint256 amountToCheck1;
+    uint256 idToCheck2; uint256 amountToCheck2;
+    uint256 idToCheck3; uint256 amountToCheck3;
+
+    uint256 balanceBefore1 = balanceOf(from, idToCheck1);
+    uint256 balanceBefore2 = balanceOf(from, idToCheck2);
+    uint256 balanceBefore3 = balanceOf(from, idToCheck3);
+
+    require ids.length == 3;        
+    require amounts.length == 3;    
+    require ids[0] == idToCheck1; require amounts[0] == amountToCheck1;
+    require ids[1] == idToCheck2; require amounts[1] == amountToCheck2;
+    require ids[2] == idToCheck3; require amounts[2] == amountToCheck3;
+
+    safeBatchTransferFrom@withrevert(e, from, to, ids, amounts, data);
+
+    assert (amountToCheck1 > balanceBefore1 || amountToCheck2 > balanceBefore2 || amountToCheck3 > balanceBefore3) => lastReverted, "Achtung! Scammer!";
+}
+
+// Sender calling safeTransferFrom should only reduce 'from' balance and not other's if sending amount is greater than 0
+// certoraRun certora/configuration/Poaps.conf  --rule cannotTransferMoreSingle 
+rule transferBalanceReduceEffect(env e){
+    address from; address to; address other;
+    uint256 id; uint256 amount; 
+    bytes data;
+
+    require other != to;
+
+    uint256 otherBalanceBefore = balanceOf(other, id);
+
+    safeTransferFrom(e, from, to, id, amount, data);
+
+    uint256 otherBalanceAfter = balanceOf(other, id);
+
+    assert from != other => otherBalanceBefore == otherBalanceAfter, "Don't touch my money!";
+}
