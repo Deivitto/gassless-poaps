@@ -113,7 +113,7 @@ rule balanceOfRevertCases(env e){
 // Chech that `balanceOfBatch()` revertes in planned scenarios and no more (only if at least one of `account`s is 0)
 // certoraRun certora/configuration/Poaps.conf  --rule balanceOfBatchRevertCases --packages @openzeppelin=lib/openzeppelin-contracts
 // warning: vacuity check failed (the rule is vacuous)
-rule balanceOfBatchRevertCases(env e){
+/*rule balanceOfBatchRevertCases(env e){
     address[] accounts; uint256[] ids;
     address account1; address account2; address account3;
     uint256 id1; uint256 id2; uint256 id3;
@@ -125,7 +125,7 @@ rule balanceOfBatchRevertCases(env e){
 
     balanceOfBatch@withrevert(accounts, ids);
     assert lastReverted => (account1 == 0 || account2 == 0 || account3 == 0), "Houston, we have a problem";
-}
+}*/
 
 /////////////////////////////////////////////////
 // Transfer (13/13)
@@ -175,7 +175,7 @@ rule transferCorrectness(env e){
 // safeBatchTransferFrom updates `from` and `to` balances)
 // certoraRun certora/configuration/Poaps.conf  --rule transferBatchCorrectness --packages @openzeppelin=lib/openzeppelin-contracts
 // warning: vacuity check failed (the rule is vacuous):
-rule transferBatchCorrectness(env e){
+/*rule transferBatchCorrectness(env e){
     address from; address to; uint256[] ids; uint256[] amounts; bytes data;
     uint256 idToCheck1; uint256 amountToCheck1;
     uint256 idToCheck2; uint256 amountToCheck2;
@@ -214,7 +214,7 @@ rule transferBatchCorrectness(env e){
     assert (toBalanceBefore1 == toBalanceAfter1 - amountToCheck1)
                 && (toBalanceBefore2 == toBalanceAfter2 - amountToCheck2)
                 && (toBalanceBefore3 == toBalanceAfter3 - amountToCheck3), "Something wet wrong";
-}
+}*/
 
 // cannot transfer more than `from` balance (safeTransferFrom version)
 // certoraRun certora/configuration/Poaps.conf  --rule cannotTransferMoreSingle --packages @openzeppelin=lib/openzeppelin-contracts
@@ -267,3 +267,160 @@ rule transferBalanceReduceEffect(env e){
 
     assert from != other => otherBalanceBefore == otherBalanceAfter, "Don't touch my money!";
 }
+
+// Sender calling safeTransferFrom should only increase 'to' balance and not other's if sending amount is greater than 0
+// certoraRun certora/configuration/Poaps.conf  --rule transferBalanceIncreaseEffect 
+rule transferBalanceIncreaseEffect(env e){
+    address from; address to; address other;
+    uint256 id; uint256 amount; 
+    bytes data;
+
+    require from != other;
+
+    uint256 otherBalanceBefore = balanceOf(other, id);
+
+    safeTransferFrom(e, from, to, id, amount, data);
+
+    uint256 otherBalanceAfter = balanceOf(other, id);
+
+    assert other != to => otherBalanceBefore == otherBalanceAfter, "Don't touch my money!";
+}
+
+// Sender calling safeTransferFrom should only reduce 'from' balance and not other's if sending amount is greater than 0
+// certoraRun certora/configuration/Poaps.conf  --rule transferBatchBalanceFromEffect 
+rule transferBatchBalanceFromEffect(env e){
+    address from; address to; address other;
+    uint256[] ids; uint256[] amounts;
+    uint256 id1; uint256 amount1; uint256 id2; uint256 amount2; uint256 id3; uint256 amount3;
+    bytes data;
+
+    require other != to;
+
+    uint256 otherBalanceBefore1 = balanceOf(other, id1);
+    uint256 otherBalanceBefore2 = balanceOf(other, id2);
+    uint256 otherBalanceBefore3 = balanceOf(other, id3);
+
+    safeBatchTransferFrom(e, from, to, ids, amounts, data);
+
+    uint256 otherBalanceAfter1 = balanceOf(other, id1);
+    uint256 otherBalanceAfter2 = balanceOf(other, id2);
+    uint256 otherBalanceAfter3 = balanceOf(other, id3);
+
+    assert from != other => (otherBalanceBefore1 == otherBalanceAfter1 
+                                && otherBalanceBefore2 == otherBalanceAfter2 
+                                && otherBalanceBefore3 == otherBalanceAfter3), "Don't touch my money!";
+}
+
+// Sender calling safeBatchTransferFrom should only increase 'to' balance and not other's if sending amount is greater than 0
+// certoraRun certora/configuration/Poaps.conf  --rule transferBatchBalanceToEffect 
+rule transferBatchBalanceToEffect(env e){
+    address from; address to; address other;
+    uint256[] ids; uint256[] amounts;
+    uint256 id1; uint256 amount1; uint256 id2; uint256 amount2; uint256 id3; uint256 amount3;
+    bytes data;
+
+    require other != from;
+
+    uint256 otherBalanceBefore1 = balanceOf(other, id1);
+    uint256 otherBalanceBefore2 = balanceOf(other, id2);
+    uint256 otherBalanceBefore3 = balanceOf(other, id3);
+
+    safeBatchTransferFrom(e, from, to, ids, amounts, data);
+
+    uint256 otherBalanceAfter1 = balanceOf(other, id1);
+    uint256 otherBalanceAfter2 = balanceOf(other, id2);
+    uint256 otherBalanceAfter3 = balanceOf(other, id3);
+
+    assert other != to => (otherBalanceBefore1 == otherBalanceAfter1 
+                                && otherBalanceBefore2 == otherBalanceAfter2 
+                                && otherBalanceBefore3 == otherBalanceAfter3), "Don't touch my money!";
+}
+
+// cannot transfer without approval (safeTransferFrom version)
+// certoraRun certora/configuration/Poaps.conf  --rule noTransferForNotApproved 
+rule noTransferForNotApproved(env e) {
+    address from; address operator;
+    address to; uint256 id; uint256 amount; bytes data;
+
+    require from != e.msg.sender;
+
+    bool approve = isApprovedForAll(from, e.msg.sender);
+
+    safeTransferFrom@withrevert(e, from, to, id, amount, data);
+
+    assert !approve => lastReverted, "You don't have king's approval!";
+}  
+
+// cannot transfer without approval (safeBatchTransferFrom version)
+// certoraRun certora/configuration/Poaps.conf  --rule noTransferBatchForNotApproved 
+rule noTransferBatchForNotApproved(env e) {
+    address from; address operator; address to; 
+    bytes data;
+    uint256[] ids; uint256[] amounts;
+
+    require from != e.msg.sender;
+
+    bool approve = isApprovedForAll(from, e.msg.sender);
+
+    safeBatchTransferFrom@withrevert(e, from, to, ids, amounts, data);
+
+    assert !approve => lastReverted, "You don't have king's approval!";
+} 
+
+// safeTransferFrom doesn't affect any approval
+// certoraRun certora/configuration/Poaps.conf  --rule noTransferEffectOnApproval 
+rule noTransferEffectOnApproval(env e){
+    address from; address to;
+    address owner; address operator;
+    uint256 id; uint256 amount; 
+    bytes data;
+
+    bool approveBefore = isApprovedForAll(owner, operator);
+
+    safeTransferFrom(e, from, to, id, amount, data);
+
+    bool approveAfter = isApprovedForAll(owner, operator);
+
+    assert approveBefore == approveAfter, "Something was effected";
+}
+
+// safeTransferFrom doesn't affect any approval
+// certoraRun certora/configuration/Poaps.conf  --rule noTransferEffectOnApproval 
+rule noTransferBatchEffectOnApproval(env e){
+    address from; address to;
+    address owner; address operator;
+    uint256[] ids; uint256[] amounts;
+    bytes data;
+
+    bool approveBefore = isApprovedForAll(owner, operator);
+
+    safeBatchTransferFrom(e, from, to, ids, amounts, data);
+
+    bool approveAfter = isApprovedForAll(owner, operator);
+
+    assert approveBefore == approveAfter, "Something was effected";
+}
+
+/////////////////////////////////////////////////
+// Mint (7/9)
+/////////////////////////////////////////////////
+
+// Additivity of mint: mint(a); mint(b) has same effect as mint(a+b)
+// certoraRun certora/configuration/Poaps.conf  --rule mintAdditivity 
+/*rule mintAdditivity(env e){
+    address to; uint256 id; uint256 amount; uint256 amount1; uint256 amount2; bytes data;
+    require amount == amount1 + amount2;
+
+    storage initialStorage = lastStorage;
+
+    mint(e, to, id, amount, data);
+
+    uint256 balanceAfterSingleTransaction = balanceOf(to, id);
+
+    mint(e, to, id, amount1, data) at initialStorage;
+    mint(e, to, id, amount2, data);
+
+    uint256 balanceAfterDoubleTransaction = balanceOf(to, id);
+
+    assert balanceAfterSingleTransaction == balanceAfterDoubleTransaction, "Not additive";
+}*/
